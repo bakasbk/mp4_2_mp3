@@ -16,6 +16,10 @@ VIDEO_EXTS = {
     "mpg", "mpeg", "ts", "vob", "ogv", "3gp", "m2ts", "mts", "mp4v",
 }
 
+# Windows 下创建子进程时不分配控制台窗口（否则每个视频都会弹出一个 ffmpeg 黑窗）
+_CREATE_NO_WINDOW = 0x08000000
+_NO_WINDOW_FLAGS = _CREATE_NO_WINDOW if os.name == "nt" else 0
+
 # PATH 找不到 ffmpeg 时的常见兜底路径（含本机已发现的路径）
 _FFMPEG_CANDIDATES = [
     r"C:\app\ffmpeg\ffmpeg-n7.1-latest-win64-gpl-shared-7.1\bin\ffmpeg.exe",
@@ -113,6 +117,7 @@ def convert_one(src: str, dst_path: str, ffmpeg: str, bitrate: str = "192k") -> 
         proc = subprocess.run(
             cmd, capture_output=True, text=True,
             encoding="utf-8", errors="replace",
+            creationflags=_NO_WINDOW_FLAGS,
         )
     except Exception as e:  # 含 FileNotFoundError
         return False, f"启动 ffmpeg 失败: {e}"

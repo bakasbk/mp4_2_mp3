@@ -1,0 +1,6 @@
+/.workbuddy
+/_acl-recovery
+/__pycache__
+/build
+/dist
+/*.spec
